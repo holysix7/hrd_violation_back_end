@@ -1,0 +1,2 @@
+class HrdViolation < ApplicationRecord
+end

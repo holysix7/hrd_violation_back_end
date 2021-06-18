@@ -2,33 +2,68 @@ class V1::HrdViolationsController < ApplicationController
   before_action :token_jwt 
 
   def index
-    violations = HrdViolation.where(:sys_plant_id => params[:sys_plant_id]).includes(:violator)
-    # puts data.as_json
-    # violations.each do |violation| 
-    puts violations
-    # end
-    # if(params[:sys_plant_id].present?)
-    #   if violations.present?
-    #     render json: {
-    #       status: "Success",
-    #       code: 200,
-    #       message: "Success Get Data HRD Violations",
-    #       data: violations
-    #     }
-    #   else
-    #     render json: {
-    #       status: "Failed",
-    #       code: 401,
-    #       message: "There's No Data HRD Violations"
-    #     }
-    #   end
-    # else
-    #   render json: {
-    #     status: "Failed",
-    #     code: 402,
-    #     message: "Failed Get Data HRD Violations, Check Sys Plant Id"
-    #   }
-    # end
+    #################################
+    ## GET LIST VIOLATIONS BY DATE ##
+    #################################
+    data          = []
+    sys_plant_id  = params[:sys_plant_id]
+    start_date    = params[:start_date]
+    end_date      = params[:end_date]
+    violations    = HrdViolation.where(:sys_plant_id => sys_plant_id, :violation_date =>start_date .. end_date)
+    violations.each do |violation| 
+      array = {
+        id: violation.id,
+        sys_plant_id: violation.sys_plant_id,
+        penalty_first_id: violation.penalty_first_id,
+        penalty_description: violation.penalty_description,
+        penalty_second_id: violation.penalty_second_id,
+        penalty_description_second: violation.penalty_description_second,
+        violator_id: violation.violator_id,
+        violator_name: violation.violator.present? ? violation.violator.name : nil,
+        enforcer_id: violation.enforcer_id,
+        enforcer_name: violation.enforcer.present? ? violation.enforcer.name : nil,
+        whitness_id: violation.whitness_id,
+        whitness_name: violation.whitness.present? ? violation.whitness.name : nil,
+        description: violation.description,
+        violation_time: violation.violation_time,
+        violation_date: violation.violation_date,
+        violation_status: violation.status,
+        violation_status_case: violation.status_case,
+        approve_1_at: violation.approve_1_at,
+        approve_1_by: violation.approve_1_by,
+        approve_2_at: violation.approve_2_at,
+        approve_2_by: violation.approve_2_by,
+        approve_3_at: violation.approve_3_at,
+        approve_3_by: violation.approve_3_by
+      }
+      data << array
+    end
+    ##############################################################################
+    #### Looping Object Because Need Object From Violator Class (sys_account) ####
+    ##############################################################################
+    puts start_date
+    if(sys_plant_id.present? && start_date.present? && end_date.present?)
+      if violations.present?
+        render json: {
+          status: "Success",
+          code: 200,
+          message: "Success Get Data HRD Violations",
+          data: data
+        }
+      else
+        render json: {
+          status: "Failed",
+          code: 401,
+          message: "There's No Data HRD Violations"
+        }
+      end
+    else
+      render json: {
+        status: "Failed",
+        code: 402,
+        message: "Failed Get Data HRD Violations, Check Parameters Again!"
+      }
+    end
   end
 
   def create

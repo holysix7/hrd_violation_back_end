@@ -89,7 +89,7 @@ class V1::HrdViolationsController < ApplicationController
     )
     # violation = HrdViolation.new(insert_validation)
 
-    if params[:sys_plant_id].present? and params[:violator_id].present? and params[:enforcer_id].present? and params[:enforcer_id].present? and params[:whitness_id].present? and params[:violation_time].present? and params[:violation_date].present?
+    if params[:sys_plant_id].present? and params[:violator_id].present? and params[:enforcer_id].present? and params[:whitness_id].present? and params[:violation_time].present? and params[:violation_date].present?
       violation.save
       render json: {
         status: "Success",

@@ -149,14 +149,29 @@ class V1::HrdViolationsController < ApplicationController
       data: response_data
     }
   end
+  
+  def get_sys
+    sysDept    = SysDepartment.all
+    if sysDept.present?
+      render json: {
+        status: "Success",
+        code: 200,
+        message: "Success Get Data Sys Department",
+        data: sysDept
+      }
+    else
+      render json: {
+        status: "Failed",
+        code: 401,
+        message: "There's No Data Sys Department"
+      }
+    end
+  end
 
   private 
   
   def token_jwt
     JsonWebToken.decode(request.headers["Authorization"])
   end
-  # def insert_validation
-  #   params.require(:violation_date).permit(:sys_plant_id, :violator_id, :enforcer_id, :whitness_id, :violation_time, :violation_date)
-  # end
 
 end

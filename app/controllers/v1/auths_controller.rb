@@ -19,7 +19,7 @@ class V1::AuthsController < ApplicationController
       }
     end
   end
-  
+
   def destroy
     
   end  

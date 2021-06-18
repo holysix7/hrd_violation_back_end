@@ -5,4 +5,5 @@ class ApplicationController < ActionController::Base
   def timeZone
     timeZone = DateTime.now.in_time_zone('Jakarta')
   end
+
 end

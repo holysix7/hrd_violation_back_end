@@ -2,29 +2,33 @@ class V1::HrdViolationsController < ApplicationController
   before_action :token_jwt 
 
   def index
-    violations = HrdViolation.where(:sys_plant_id => params[:sys_plant_id])
-    if(params[:sys_plant_id].present?)
-      if violations.present?
-        render json: {
-          status: "Success",
-          code: 200,
-          message: "Success Get Data HRD Violations",
-          data: violations
-        }
-      else
-        render json: {
-          status: "Failed",
-          code: 401,
-          message: "There's No Data HRD Violations"
-        }
-      end
-    else
-      render json: {
-        status: "Failed",
-        code: 402,
-        message: "Failed Get Data HRD Violations, Check Sys Plant Id"
-      }
-    end
+    violations = HrdViolation.where(:sys_plant_id => params[:sys_plant_id]).includes(:violator)
+    # puts data.as_json
+    # violations.each do |violation| 
+    puts violations
+    # end
+    # if(params[:sys_plant_id].present?)
+    #   if violations.present?
+    #     render json: {
+    #       status: "Success",
+    #       code: 200,
+    #       message: "Success Get Data HRD Violations",
+    #       data: violations
+    #     }
+    #   else
+    #     render json: {
+    #       status: "Failed",
+    #       code: 401,
+    #       message: "There's No Data HRD Violations"
+    #     }
+    #   end
+    # else
+    #   render json: {
+    #     status: "Failed",
+    #     code: 402,
+    #     message: "Failed Get Data HRD Violations, Check Sys Plant Id"
+    #   }
+    # end
   end
 
   def create

@@ -15,7 +15,7 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   database: db_fikri
   username: fikri
-  password: Fikri@123
+  password: PassBaru@2020
   host: 192.168.131.119
   port: 3306
   socket: /var/run/mysqld/mysqld.sock

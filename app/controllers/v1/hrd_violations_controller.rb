@@ -14,18 +14,18 @@ class V1::HrdViolationsController < ApplicationController
       array = {
         id: violation.id,
         sys_plant_id: violation.sys_plant_id,
-        penalty_first_id: violation.penalty_first_id,
-        penalty_description: violation.penalty_description,
-        penalty_second_id: violation.penalty_second_id,
-        penalty_description_second: violation.penalty_description_second,
+        # penalty_first_id: violation.penalty_first_id,
+        # penalty_description: violation.penalty_description,
+        # penalty_second_id: violation.penalty_second_id,
+        # penalty_description_second: violation.penalty_description_second,
         violator_id: violation.violator_id,
         violator_name: violation.violator.present? ? violation.violator.name : nil,
-        enforcer_id: violation.enforcer_id,
-        enforcer_name: violation.enforcer.present? ? violation.enforcer.name : nil,
-        whitness_id: violation.whitness_id,
-        whitness_name: violation.whitness.present? ? violation.whitness.name : nil,
-        description: violation.description,
-        violation_time: violation.violation_time,
+        # enforcer_id: violation.enforcer_id,
+        # enforcer_name: violation.enforcer.present? ? violation.enforcer.name : nil,
+        # whitness_id: violation.whitness_id,
+        # whitness_name: violation.whitness.present? ? violation.whitness.name : nil,
+        # description: violation.description,
+        violation_time: violation.violation_time.strftime("%H:%M"),
         violation_date: violation.violation_date,
         violation_status: violation.status,
         violation_status_case: violation.status_case,
@@ -41,7 +41,6 @@ class V1::HrdViolationsController < ApplicationController
     ##############################################################################
     #### Looping Object Because Need Object From Violator Class (sys_account) ####
     ##############################################################################
-    puts start_date
     if(sys_plant_id.present? && start_date.present? && end_date.present?)
       if violations.present?
         render json: {
@@ -54,14 +53,16 @@ class V1::HrdViolationsController < ApplicationController
         render json: {
           status: "Failed",
           code: 401,
-          message: "There's No Data HRD Violations"
+          message: "There's No Data HRD Violations",
+          data: []
         }
       end
     else
       render json: {
         status: "Failed",
         code: 402,
-        message: "Failed Get Data HRD Violations, Check Parameters Again!"
+        message: "Failed Get Data HRD Violations, Check Parameters Again!",
+        data: []
       }
     end
   end

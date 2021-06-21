@@ -7,6 +7,6 @@ Rails.application.routes.draw do
     post '/hrd_violations' => 'hrd_violations#create'
     put '/hrd_violations' => 'hrd_violations#approve'
 
-    get '/getsysplant' => 'hrd_violations#get_sys'
+    get '/getpenalties' => 'hrd_violations#get_penalties'
   end
 end

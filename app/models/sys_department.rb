@@ -1,2 +1,0 @@
-class SysDepartment < ApplicationRecord
-end

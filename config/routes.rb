@@ -8,5 +8,6 @@ Rails.application.routes.draw do
     put '/hrd_violations' => 'hrd_violations#approve'
 
     get '/getpenalties' => 'hrd_violations#get_penalties'
+    get '/auths/sysaccount' => 'auths#sysaccount'
   end
 end

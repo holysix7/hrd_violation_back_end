@@ -24,6 +24,25 @@ class V1::AuthsController < ApplicationController
     
   end  
 
+  def sysaccount
+    users = SysAccount.all
+    if users.present?
+      render json: {
+        status: "Failed",
+        code: 200,
+        message: "Success get data user",
+        data: users
+      }
+    else
+      render json: {
+        status: "Failed",
+        code: 400,
+        message: "Success get data user",
+        data: nil
+      }
+    end
+  end
+  
   def auto_login
     render json: user
   end

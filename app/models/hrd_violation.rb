@@ -7,4 +7,6 @@ class HrdViolation < ApplicationRecord
   belongs_to :approved_3, :class_name => 'SysAccount', :foreign_key => "approve_3_by", optional: true
   belongs_to :penalty_first, :class_name => 'HrdViolationPenalty', :foreign_key => "penalty_first_id", optional: true
   belongs_to :penalty_second, :class_name => 'HrdViolationPenalty', :foreign_key => "penalty_second_id", optional: true
+
+  has_many :hrd_violation_files
 end

@@ -9,7 +9,7 @@ class V1::HrdViolationsController < ApplicationController
     sys_plant_id  = params[:sys_plant_id]
     start_date    = params[:start_date]
     end_date      = params[:end_date]
-    violations    = HrdViolation.where(:sys_plant_id => sys_plant_id, :violation_date =>start_date .. end_date)
+    violations    = HrdViolation.where(:sys_plant_id => sys_plant_id, :violation_date =>start_date .. end_date).includes(:violator, :penalty_first, :penalty_second, :enforcer, :whitness, :approved_1, :approved_2, :approved_3)
     violations.each do |violation| 
       array = {
         id: violation.id,
@@ -39,14 +39,20 @@ class V1::HrdViolationsController < ApplicationController
         approve_2_at: violation.approve_2_at,
         approve_2_by: violation.approved_2.present? ? violation.approved_2.name : nil,
         approve_3_at: violation.approve_3_at,
-        approve_3_by: violation.approved_3.present? ? violation.approved_3.name : nil
+        approve_3_by: violation.approved_3.present? ? violation.approved_3.name : nil,
+        # image: violation.hrd_violation_files.length() ? violation.hrd_violation_files.map { 
+        #   |hrd_violation_file| {
+        #   id: hrd_violation_file.id, 
+        #   base64_full: hrd_violation_file.base64_full
+        #   } 
+        # } : nil
       }
       data << array
     end
     ##############################################################################
     #### Looping Object Because Need Object From Violator Class (sys_account) ####
     ##############################################################################
-    if(sys_plant_id.present? && start_date.present? && end_date.present?)
+    if sys_plant_id.present? && start_date.present? && end_date.present?
       if violations.present?
         render json: {
           status: "Success",
@@ -68,6 +74,59 @@ class V1::HrdViolationsController < ApplicationController
         code: 402,
         message: "Failed Get Data HRD Violations, Check Parameters Again!",
         data: []
+      }
+    end
+  end
+
+  def show_violation
+    violations    = HrdViolation.where(:id => params[:id], :sys_plant_id => params[:sys_plant_id], :violation_date =>params[:start_date] .. params[:end_date]).includes(:violator, :penalty_first, :penalty_second, :enforcer, :whitness, :approved_1, :approved_2, :approved_3, :hrd_violation_files)
+    data = []
+    violations.each do |violation| 
+      array = {
+        id: violation.id,
+        sys_plant_id: violation.sys_plant_id,
+        penalty_first_id: violation.penalty_first_id,
+        penalty_first_name: violation.penalty_first.present? ? violation.penalty_first.name : nil,
+        penalty_description: violation.penalty_description,
+        penalty_second_id: violation.penalty_second_id,
+        penalty_second_name: violation.penalty_second.present? ? violation.penalty_second.name : nil,
+        penalty_description_second: violation.penalty_description_second,
+        violator_id: violation.violator_id,
+        violator_name: violation.violator.present? ? violation.violator.name : nil,
+        violator_nik: violation.violator.present? ? violation.violator.user : nil,
+        enforcer_id: violation.enforcer_id,
+        enforcer_name: violation.enforcer.present? ? violation.enforcer.name : nil,
+        enforcer_nik: violation.enforcer.present? ? violation.enforcer.user : nil,
+        whitness_id: violation.whitness_id,
+        whitness_name: violation.whitness.present? ? violation.whitness.name : nil,
+        whitness_nik: violation.whitness.present? ? violation.whitness.user : nil,
+        description: violation.description,
+        violation_time: violation.violation_time.strftime("%H:%M"),
+        violation_date: violation.violation_date,
+        violation_status: violation.status,
+        violation_status_case: violation.status_case,
+        approve_1_at: violation.approve_1_at,
+        approve_1_by: violation.approved_1.present? ? violation.approved_1.name : nil,
+        approve_2_at: violation.approve_2_at,
+        approve_2_by: violation.approved_2.present? ? violation.approved_2.name : nil,
+        approve_3_at: violation.approve_3_at,
+        approve_3_by: violation.approved_3.present? ? violation.approved_3.name : nil,
+        image: violation.hrd_violation_files.length() ? violation.hrd_violation_files.map { 
+          |hrd_violation_file| {
+          id: hrd_violation_file.id, 
+          base64_full: hrd_violation_file.base64_full
+          } 
+        } : nil
+      }
+      data << array
+    end
+    
+    if violations.present?
+      render json: {
+        status: "Success",
+        code: 200,
+        message: "Success Show Data HRD Violation",
+        data: data.first
       }
     end
   end
@@ -94,9 +153,24 @@ class V1::HrdViolationsController < ApplicationController
       updated_by: params[:violator_id],
     )
     # violation = HrdViolation.new(insert_validation)
-
     if params[:sys_plant_id].present? and params[:violator_id].present? and params[:enforcer_id].present? and params[:whitness_id].present? and params[:violation_time].present? and params[:violation_date].present?
-      violation.save
+      if params[:item_image].present?
+      puts '================================================'
+        params[:item_image].each do |item| 
+          violation.hrd_violation_files.build(
+            status: 'active',
+            created_by: item['created_by'],
+            base64_full: item['base64_full']
+          )
+        end
+        violation.save
+      else
+        render json: {
+          status: 'Failed',
+          code: 401,
+          message: "Parent Didn't Save"
+        }
+      end
       render json: {
         status: "Success",
         code: 200,

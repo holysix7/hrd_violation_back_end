@@ -1,3 +1,3 @@
 class SysAccount < ApplicationRecord
-  has_many :hrd_violation
+  has_many :hrd_violations
 end

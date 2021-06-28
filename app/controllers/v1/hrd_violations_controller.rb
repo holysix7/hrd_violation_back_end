@@ -54,32 +54,32 @@ class V1::HrdViolationsController < ApplicationController
     ##############################################################################
     if sys_plant_id.present? && start_date.present? && end_date.present?
       if violations.present?
-        render json: {
-          status: "Success",
-          code: 200,
-          message: "Success Get Data HRD Violations",
-          data: data
-        }
+        status = "Success",
+        code = 200,
+        message = "Success Get Data HRD Violations",
+        data = data
       else
-        render json: {
-          status: "Failed",
-          code: 401,
-          message: "There's No Data HRD Violations",
-          data: []
-        }
+        status = "Failed",
+        code = 401,
+        message = "There's No Data HRD Violations",
+        data = []
       end
     else
-      render json: {
-        status: "Failed",
-        code: 402,
-        message: "Failed Get Data HRD Violations, Check Parameters Again!",
-        data: []
-      }
+      status = "Failed",
+      code = 402,
+      message = "Failed Get Data HRD Violations, Check Parameters Again!",
+      data = []
     end
+    render json: {
+      status: status,
+      code: code,
+      message: message,
+      data: data.length > 0 ? data : []
+    }
   end
 
   def show_violation
-    violations    = HrdViolation.where(:id => params[:id], :sys_plant_id => params[:sys_plant_id], :violation_date =>params[:start_date] .. params[:end_date]).includes(:violator, :penalty_first, :penalty_second, :enforcer, :whitness, :approved_1, :approved_2, :approved_3, :hrd_violation_files)
+    violations    = HrdViolation.where(:id => params[:id])
     data = []
     violations.each do |violation| 
       array = {
@@ -246,13 +246,13 @@ class V1::HrdViolationsController < ApplicationController
   end
   
   def get_penalties
-    sysDept    = HrdViolationPenalty.all
-    if sysDept.present?
+    data    = HrdViolationPenalty.all
+    if data.present?
       render json: {
         status: "Success",
         code: 200,
         message: "Success Get Data Penalties",
-        data: sysDept
+        data: data
       }
     else
       render json: {

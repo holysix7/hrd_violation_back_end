@@ -200,16 +200,31 @@ class V1::HrdViolationsController < ApplicationController
     if id_violation.present?
       dataViolation = HrdViolation.find_by(:id=> id_violation)
       if dataViolation.present?
-        dataViolation.update(
-          updated_at: timeZone.strftime("%Y-%m-%d %H:%M:%S"),
-          updated_by: params[:user_id],
-          "approve_#{params[:approve]}_at".to_sym=> timeZone.strftime("%Y-%m-%d %H:%M:%S"),
-          "approve_#{params[:approve]}_by".to_sym=> params[:user_id]
-        )
-        response_status = "Success"
-        response_code = 200
-        response_message = "Success Approve #{params[:approve]} Data HRD Violation With Id #{id_violation}"
-        response_data = dataViolation
+        if params[:type] == 'Approve'
+          dataViolation.update(
+            updated_at: timeZone.strftime("%Y-%m-%d %H:%M:%S"),
+            updated_by: params[:user_id],
+            "approve_#{params[:approve]}_at".to_sym=> timeZone.strftime("%Y-%m-%d %H:%M:%S"),
+            "approve_#{params[:approve]}_by".to_sym=> params[:user_id]
+          )
+          response_status = "Success"
+          response_code = 200
+          response_message = "Success Approve #{params[:approve]} Data HRD Violation With Id #{id_violation}"
+          response_data = dataViolation
+        else
+          dataViolation.update(
+            updated_at: timeZone.strftime("%Y-%m-%d %H:%M:%S"),
+            updated_by: params[:user_id],
+            "cancel_approve_#{params[:cancel]}_at".to_sym=> timeZone.strftime("%Y-%m-%d %H:%M:%S"),
+            "cancel_approve_#{params[:cancel]}_by".to_sym=> params[:user_id],
+            "approve_#{params[:approve]}_at".to_sym=> nil,
+            "approve_#{params[:approve]}_by".to_sym=> nil
+          )
+          response_status = "Success"
+          response_code = 200
+          response_message = "Success Approve #{params[:approve]} Data HRD Violation With Id #{id_violation}"
+          response_data = dataViolation
+        end
       else
         response_status = "Failed"
         response_code = 401

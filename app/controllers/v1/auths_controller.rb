@@ -1,8 +1,6 @@
 class V1::AuthsController < ApplicationController
   def create
     user = SysAccount.find_by(user: params[:user])
-    # user[:department_name] = nil
-    # user[:department_name] = "IT Department"
     if user.present? and user.password_clear == params[:password]
       token = JsonWebToken.encode(user.as_json)
       render json: {
